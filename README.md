@@ -1,9 +1,9 @@
-This is the README file for Lab_1
+This is the README file for Lab_2
 
-NAME: Conner Graham
-DATE: 01/21/2021
+NAME: Conner Graham, Ben Nagel
+DATE: 02/02/2021
 
-DESCRIPTION:
+DESCRIPTION: TODO
 This lab contains a program called "count" which reads a
 binary file (in chunks) as input and prints the following statistics to the screen, as well as to a specified output-file:
 - size of the input-file in bytes
@@ -16,12 +16,15 @@ created, the program prints appropriate messages and
 shows how to correctly invoke the program. 
 
 USAGE: ($ denotes the command prompt)
-$ count <input-filename> <search-string> <output-filename>
+Start the file transfer server with the command...
+$ ftps <local-port>
+Then start the file transfer client with the command...
+$ ftpc <remote-IP> <remote-port> <local-file-to-transfer>
 
 If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
-ASSUMPTIONS:
+ASSUMPTIONS: TODO
 - It is assumed that each argument string retrieved from
   the command line will be NULL terminated with no other
   NULL characters present within the string.
