@@ -22,8 +22,10 @@ void print_error(const char *msg, int errnum, int terminate);
 void handle_init_error(const char *msg, int errnoSet);
 void extractArgs(char *argv[], unsigned long *address, int *port, char *filename);
 int create_endpoint(struct sockaddr_in *socketAddr, unsigned long address, int port);
-long get_file_size(FILE *file);
-void transferFile(int sd, char *filename, FILE *file);
+unsigned long get_file_size(FILE *file);
+int transfer_header(int sd, unsigned long fileSize, char *filename);
+int transfer_data(int sd, unsigned long fileSize, FILE *file);
+void transfer_file(int sd, char *filename, FILE *file);
 
 /**
  * @brief This program TODO
@@ -47,7 +49,7 @@ int main(int argc, char *argv[]) {
 	struct sockaddr_in serverAddr;
 	
 	/* If arg count correct, extract arguments to their respective variables */
-	if (argc != NUM_ARGS) handle_init_error("argc: Invalid number of command line arguments", errno);
+	if (argc != NUM_ARGS) handle_init_error("argc: Invalid number of command line arguments", 0);
 	extractArgs(argv, &serverNetAddr, &portNumber, localFilename);
 	/* Attempt to open the local file to transfer */
 	if ((localFile = fopen(localFilename, "rb")) == NULL) handle_init_error("open local-file-to-transfer", errno);
@@ -56,16 +58,16 @@ int main(int argc, char *argv[]) {
 	socketDesc = create_endpoint(&serverAddr, serverNetAddr, portNumber);
 	if (connect(socketDesc, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr_in)) != -1) {
 		printf("[+]Connected to server.\n");
-		transferFile(socketDesc, localFilename, localFile);
+		printf("Connected to IP address %s on port %hd\n", argv[1], htons(portNumber));
+		transfer_file(socketDesc, localFilename, localFile);
+		/* Close file since transmission is finished */
+		if (fclose(localFile) < 0) print_error("close local-file-to-transfer", errno, 0);
+		/* Close the connection */
 		printf("[+]Closing the connection.\n");
-		if (shutdown(socketDesc, SHUT_RDWR) < 0) print_error("close_connection", errno, 0);
+		if (close(socketDesc) < 0) print_error("close socket-descriptor", errno, 0);
 	} else {
 		print_error("connect_to_server", errno, 0);
 	}
-
-	/* Attempt to close any file descriptors */
-	if (close(socketDesc) < 0) print_error("close socket-descriptor", errno, 0);
-	if (fclose(localFile) < 0) print_error("close local-file-to-transfer", errno, 0);
 	return 0;
 }
 
@@ -121,7 +123,7 @@ void handle_init_error(const char *msg, int errnum) {
 }
 
 /**
- * @brief 
+ * @brief TODO
  * 
  * @param str 
  * @param reject 
@@ -137,7 +139,7 @@ int valid_str(const char *str, const char *reject) {
 }
 
 /**
- * @brief 
+ * @brief TODO
  * 
  * @param argv 
  * @param address 
@@ -147,13 +149,14 @@ int valid_str(const char *str, const char *reject) {
 void extractArgs(char *argv[], unsigned long *address, int *port, char *filename) {
 	char *invalidFileChars = "/\\";
 	*address = inet_addr(argv[1]);
-	if (*address == INADDR_NONE || *address == INADDR_ANY) handle_init_error("remote-IP: Invalid server address", errno);
+	printf("%lu\n", *address);
+	if (*address == INADDR_NONE || *address == INADDR_ANY) handle_init_error("remote-IP: Invalid server address", 0);
 	*port = strtol(argv[2], NULL, 10);
-	if (*port < 1 || *port != (u_int16_t)(*port)) handle_init_error("remote-port: Invalid port number", errno);
+	if (*port < 1 || *port != (u_int16_t)(*port)) handle_init_error("remote-port: Invalid port number", 0);
 	strcpy(filename, argv[3]);
-	if (strlen(filename) > FILENAME_SIZE) handle_init_error("local-file-to-transfer: Filename is too long", errno);
+	if (strlen(filename) > FILENAME_SIZE) handle_init_error("local-file-to-transfer: Filename is too long", 0);
 	if (strcmp(filename, ".") == 0 || strcmp("..", filename) == 0 || !valid_str(filename, invalidFileChars)) {
-		handle_init_error("local-file-to-transfer: Invalid filename or characters in filename", errno);
+		handle_init_error("local-file-to-transfer: Invalid filename or characters in filename", 0);
 	}
 }
 
@@ -171,7 +174,7 @@ int create_endpoint(struct sockaddr_in *socketAddr, unsigned long address, int p
 		socketAddr->sin_family = AF_INET;
 		socketAddr->sin_addr.s_addr = address;
 		socketAddr->sin_port = htons(port);
-		printf("[+]Client socket created successfully.\n");
+		printf("[+]Server socket created successfully.\n");
 	} else {
 		print_error("create_endpoint", errno, 1);
 	}
@@ -185,46 +188,113 @@ int create_endpoint(struct sockaddr_in *socketAddr, unsigned long address, int p
  * @param file The pointer to a FILE object.
  * @return The file size in bytes.
  */
-long get_file_size(FILE *file) {
-	long size;
+unsigned long get_file_size(FILE *file) {
+	unsigned long size;
 	/* Set position to end of file */
-	fseek(file, 0, SEEK_END);
+	if (fseek(file, 0, SEEK_END) < 0) print_error("get_file_size", errno, 0);
 	/* Get current byte position */
-	size = ftell(file);
+	if ((size = ftell(file)) == -1) print_error("get_file_size", errno, 0);
 	/* Reset position to beginning of file */
 	rewind(file);
-
 	return size;
 }
 
 /**
- * @brief FIXME
+ * @brief TODO
+ * 
+ * @param sd 
+ * @param fileSize 
+ * @param filename 
+ * @return int 
+ */
+int transfer_header(int sd, unsigned long fileSize, char *filename) {
+	uint64_t netFileSize = htonll(fileSize);
+
+	printf("Sending file size of %lu bytes\n", fileSize);
+	if (send(sd, &netFileSize, sizeof(uint64_t), 0) < 0) {
+		print_error("transfer_header", errno, 0);
+		return 0;
+	}
+	sleep(5);		/* FIXME */
+	printf("Sending filename \'%s\'\n", filename);
+	if (send(sd, filename, strlen(filename)+1, 0) < 0) {
+		print_error("transfer_header", errno, 0);
+		return 0;
+	}
+	return 1;
+}
+
+/**
+ * @brief TODO
+ * 
+ * @param sd 
+ * @param fileSize 
+ * @param file 
+ */
+int transfer_data(int sd, unsigned long fileSize, FILE *file) {
+	int isSuccess = 1, bRead = 0, bSent = 0;
+	unsigned long totalSent = 0;
+	char buffer[BUFFER_SIZE];
+
+	sleep(5);		/* FIXME */
+	do {
+		bRead = fread(buffer, sizeof(char), BUFFER_SIZE, file);
+		if (ferror(file)) {
+			print_error("file_read: Error reading from file", 0, 0);
+			isSuccess = 0;
+			break;
+		}
+		printf("HERE1\n");		/* FIXME */
+		totalSent += (bSent = send(sd, buffer, bRead, 0));
+		printf("HERE2 %d\n", bSent);		/* FIXME */
+		if (bSent < 0) {
+			printf("ERROR\n");		/* FIXME */
+			print_error("transfer_data", errno, 0);
+			isSuccess = 0;
+			break;
+		}
+		printf("HERE3\n");		/* FIXME */
+		if (bRead != bSent) {
+			print_error("transfer_data: Number of bytes read and sent differ", 0, 0);
+			isSuccess = 0;
+		}
+	} while (bRead == BUFFER_SIZE);
+	printf("Total of %lu bytes of data sent\n", totalSent);
+	if (!isSuccess || totalSent != fileSize) {
+		print_error("transfer_data: File data transfer was unsuccessful", 0, 0);
+		isSuccess = 0;
+	} else {
+		printf("File data sent successfully\n");
+	}
+	return isSuccess;
+}
+
+/**
+ * @brief TODO
  * 
  * @param sd 
  * @param filename 
  * @param file 
  */
-void transferFile(int sd, char *filename, FILE *file) {
-	int bRead = 0, bSent = 0;
-	char buffer[BUFFER_SIZE];
+void transfer_file(int sd, char *filename, FILE *file) {
+	unsigned long fileSize = get_file_size(file);
+	
+	printf("[+]Executing file transfer.\n");
+	if (transfer_header(sd, fileSize, filename)) {
+		if (transfer_data(sd, fileSize, file)) {
+			uint64_t bytesRecvd = -1;
 
-	uint64_t fileSize = htonll(get_file_size(file));
-	printf("%lu, %lu\n", ntohll(fileSize), fileSize);
-	write(sd, &fileSize, sizeof(uint64_t));
-	write(sd, filename, strlen(filename));
-
-	do {
-		bRead = fread(buffer, sizeof(char), BUFFER_SIZE, file);
-		bSent = send(sd, buffer, bRead, 0);
-	} while (bRead == BUFFER_SIZE);
-
-	printf("%s\n%d, %d\n", buffer, bRead, bSent);
-
-	int bytes = 0;
-	uint64_t num = 0;
-	if ((bytes = recv(sd, &num, sizeof(uint64_t), 0)) < 0) {
-		print_error("TEST", errno, 0);
-	} else {
-		printf("%d, %lu\n", bytes, ntohll(num));
+			if (recv(sd, &bytesRecvd, sizeof(uint64_t), 0) < 0) {
+				print_error("recv_ack", errno, 0);
+				return;
+			} else {
+				printf("Server received %lu of total %lu bytes\n", ntohll(bytesRecvd), fileSize);
+			}
+			if (ntohll(bytesRecvd) == fileSize) {
+				printf("Server received the file successfully\n");
+			} else {
+				print_error("transfer_file: Server received the file unsuccessfully", 0, 0);
+			}
+		}
 	}
 }
