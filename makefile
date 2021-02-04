@@ -19,7 +19,7 @@ openCode: README.md makefile ftps.c ftpc.c
 	code $^
 	
 # Target to open lab files
-openData: #TODO
+openData: foo.jpg
 	code $^
 
 # Remove executables for clean build
