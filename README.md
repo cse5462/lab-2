@@ -4,15 +4,23 @@
 **NAME:** Conner Graham, Ben Nagel  
 **DATE:** 02/04/2021
 
-## Included Files:
+## Table of Contents:
+- [Included Files](#included-files)
+- [FTP Client](#ftp-client)
+  - [Description](#description-client)
+- [FTP Server](#ftp-server)
+  - [Description](#description-server)
+
+## Included Files
 - [makefile](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/makefile)
 - Client Design Document - Design_Client.md
 - FTP Client Source Code - [ftpc.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftpc.c)
 - FTP Server Source Code - [ftps.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftps.c)
 
-## FTP CLIENT - By: Conner Graham
+## FTP CLIENT
+> By: Conner Graham
 
-### DESCRIPTION:
+### DESCRIPTION <a name="description-client"></a>
 This lab contains a program called "ftpc" which creates
 and sets up a file transfer protocal client. This client
 connects to the specified server (IP address and port),
@@ -30,7 +38,7 @@ local-file-to-transfer is incorrect, or the remote IP
 address/port is invalid, the program prints appropriate
 messages and shows how to correctly invoke the program. 
 
-### USAGE:
+### USAGE
 Start the FTP Client with the command...
 ```sh
 $ ftpc <remote-IP> <remote-port> <local-file-to-transfer>
@@ -39,7 +47,7 @@ $ ftpc <remote-IP> <remote-port> <local-file-to-transfer>
 If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
-### ASSUMPTIONS:
+### ASSUMPTIONS
 - It is assumed that each argument string retrieved from
   the command line will be NULL terminated with no other
   NULL characters present within the string.
@@ -57,9 +65,10 @@ arguments will need to be enclosed in quotes.
 - It is assumed that the ACK (file size) will be sent in
   one go such that it can be read all at once.
 
-## FTP SERVER - By: Ben Nagel
+## FTP SERVER
+> By: Ben Nagel
 
-### DESCRIPTION:
+### DESCRIPTION <a name="description-server"></a>
 This lab contains a program called "ftps" which creates a server 
 and sets up the server which waits to be connected with a client 
 following the defined protocol. The server connects to an incoming client
@@ -76,7 +85,7 @@ follows:
 - Returns the amount of bytes read from the client stream
 - Closes the connection to the client 
 
-### USAGE:
+### USAGE
 Start the FTP Server with the command...
 ```sh
 $ ftps <local-port>
@@ -85,7 +94,7 @@ $ ftps <local-port>
 If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
-### ASSUMPTIONS:
+### ASSUMPTIONS
 - It is assumed that the filesize will be sent in one go.
 - It is assumed that the file name uses and ASCII
   encoding.
