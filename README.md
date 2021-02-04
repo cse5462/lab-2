@@ -62,8 +62,9 @@ follows:
 - Create server socket from user provided port
 - Establish TCP STREAM connection to remote client
 - Perform file transfer over the connection
-- Reset's the server if the stream is cut mid-send.
-- returns the amount of bytes read from the client stream
+- Reset's the server if the stream is cut mid-send or any other errors.
+- Returns the amount of bytes read from the client stream
+- Closes the connection to the client 
 
 USAGE: ($ denotes the command prompt)
 Start the file transfer server with the command...
