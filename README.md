@@ -8,8 +8,12 @@
 - [Included Files](#included-files)
 - [FTP Client](#ftp-client)
   - [Description](#description-client)
+  - [Usage](#usage-client)
+  - [Assumptions](#assumptions-client)
 - [FTP Server](#ftp-server)
   - [Description](#description-server)
+  - [Usage](#usage-server)
+  - [Assumptions](#assumptions-server)
 
 ## Included Files
 - [makefile](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/makefile)
@@ -38,7 +42,7 @@ local-file-to-transfer is incorrect, or the remote IP
 address/port is invalid, the program prints appropriate
 messages and shows how to correctly invoke the program. 
 
-### USAGE
+### USAGE <a name="usage-client"></a>
 Start the FTP Client with the command...
 ```sh
 $ ftpc <remote-IP> <remote-port> <local-file-to-transfer>
@@ -47,7 +51,7 @@ $ ftpc <remote-IP> <remote-port> <local-file-to-transfer>
 If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
-### ASSUMPTIONS
+### ASSUMPTIONS <a name="assumptions-client"></a>
 - It is assumed that each argument string retrieved from
   the command line will be NULL terminated with no other
   NULL characters present within the string.
@@ -85,7 +89,7 @@ follows:
 - Returns the amount of bytes read from the client stream
 - Closes the connection to the client 
 
-### USAGE
+### USAGE <a name="usage-server"></a>
 Start the FTP Server with the command...
 ```sh
 $ ftps <local-port>
@@ -94,7 +98,7 @@ $ ftps <local-port>
 If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
-### ASSUMPTIONS
+### ASSUMPTIONS <a name="assumptions-server"></a>
 - It is assumed that the filesize will be sent in one go.
 - It is assumed that the file name uses and ASCII
   encoding.
