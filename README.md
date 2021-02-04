@@ -44,7 +44,10 @@ ASSUMPTIONS:
 - It is assumed that all numeric values received from the
   server will be in network order.
 - It is assumed that the IP addresses 0.0.0.0 and
-  255.255.255.255 are invalid remote server addresses to connect to as they are reserved values.
+  255.255.255.255 are invalid remote server addresses to
+  connect to as they are reserved values.
+- It is assumed that the ACK (file size) will be sent in
+  one go such that it can be read all at once.
 
 **************
 | FTP SERVER |  By: Ben Nagel
