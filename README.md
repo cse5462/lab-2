@@ -21,7 +21,7 @@
 - FTP Client Source Code - [ftpc.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftpc.c)
 - FTP Server Source Code - [ftps.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftps.c)
 
-## FTP CLIENT
+## FTP Client
 > By: Conner Graham
 
 ### DESCRIPTION <a name="description-client"></a>
@@ -69,7 +69,7 @@ arguments will need to be enclosed in quotes.
 - It is assumed that the ACK (file size) will be sent in
   one go such that it can be read all at once.
 
-## FTP SERVER
+## FTP Server
 > By: Ben Nagel
 
 ### DESCRIPTION <a name="description-server"></a>
