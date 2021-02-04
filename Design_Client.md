@@ -10,6 +10,7 @@
 ## Environment Constants
 ```C#
 NUM_ARGS = 4                    // number of command line arguments
+INVALID_FILE_CHARS = "/\\"      // invalid characters for filename
 FILENAME_SIZE = 255 (bytes)     // maximum filename size (excluding NULL)
 BUFFER_SIZE = TBD (bytes)       // buffer size for the file transfer
 ```
