@@ -12,8 +12,9 @@
 ```C#
 NUM_ARGS = 4                    // number of command line arguments
 INVALID_FILENAME_CHARS = "/\\"  // invalid characters for filename
-FILENAME_SIZE = 255 (bytes)     // maximum filename size (excluding NULL)
-BUFFER_SIZE = TBD (bytes)       // buffer size for the file transfer
+FILENAME_SIZE = 255             // maximum filename size (excluding NULL) in bytes
+MAX_FILE_SIZE = (2^64)-1        // maximum file size in bytes
+BUFFER_SIZE = TBD               // buffer size in bytes for the file transfer
 ```
 
 ## High-Level Architecture
