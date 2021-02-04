@@ -11,6 +11,7 @@
 ## Environment Constants
 
 /* The maximum number of bytes for file names. */
+
 #define FILENAME_SIZE 256
 
 /* The buffer size (in bytes) for the file transfer. */
