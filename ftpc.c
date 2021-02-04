@@ -11,6 +11,8 @@
 
 /* The number of command line arguments. */
 #define NUM_ARGS 4
+/* TODO */
+#define INVALID_FILENAME_CHARS "/\\"
 /* The maximum number of bytes (excluding NULL) for file names. */
 #define FILENAME_SIZE 255
 /* The buffer size (in bytes) for the file transfer. */
@@ -147,14 +149,13 @@ int valid_str(const char *str, const char *reject) {
  * @param filename 
  */
 void extractArgs(char *argv[], unsigned long *address, int *port, char *filename) {
-	char *invalidFileChars = "/\\";
 	*address = inet_addr(argv[1]);
 	if (*address == INADDR_NONE || *address == INADDR_ANY) handle_init_error("remote-IP: Invalid server address", 0);
 	*port = strtol(argv[2], NULL, 10);
 	if (*port < 1 || *port != (u_int16_t)(*port)) handle_init_error("remote-port: Invalid port number", 0);
 	strcpy(filename, argv[3]);
 	if (strlen(filename) > FILENAME_SIZE) handle_init_error("local-file-to-transfer: Filename is too long", 0);
-	if (strcmp(filename, ".") == 0 || strcmp("..", filename) == 0 || !valid_str(filename, invalidFileChars)) {
+	if (strcmp(filename, ".") == 0 || strcmp("..", filename) == 0 || !valid_str(filename, INVALID_FILENAME_CHARS)) {
 		handle_init_error("local-file-to-transfer: Invalid filename or characters in filename", 0);
 	}
 }
@@ -233,7 +234,7 @@ int transfer_data(int sd, unsigned long fileSize, FILE *file) {
 	int isSuccess = 1, bRead = 0, bSent = 0;
 	unsigned long totalSent = 0;
 	char buffer[BUFFER_SIZE];
-
+	
 	do {
 		bRead = fread(buffer, sizeof(char), BUFFER_SIZE, file);
 		if (ferror(file)) {
@@ -278,6 +279,7 @@ void transfer_file(int sd, char *filename, FILE *file) {
 		if (transfer_data(sd, fileSize, file)) {
 			uint64_t bytesRecvd = -1;
 
+			printf("[+]Waiting for ACK from server.\n");
 			if (recv(sd, &bytesRecvd, sizeof(uint64_t), 0) < 0) {
 				print_error("recv_ack", errno, 0);
 				return;
