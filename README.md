@@ -1,11 +1,13 @@
-This is the README file for Lab_2
+# File Transfer Program – Stream Sockets
+> This is the README file for Lab_2
 
 NAME: Conner Graham, Ben Nagel
+
 DATE: 02/04/2021
 
-**************
-| FTP CLIENT |  By: Conner Graham
-**************
+*********************************
+## FTP CLIENT - By: Conner Graham
+*********************************
 DESCRIPTION:
 This lab contains a program called "ftpc" which creates
 and sets up a file transfer protocal client. This client
@@ -49,9 +51,9 @@ ASSUMPTIONS:
 - It is assumed that the ACK (file size) will be sent in
   one go such that it can be read all at once.
 
-**************
-| FTP SERVER |  By: Ben Nagel
-**************
+*****************************
+## FTP SERVER - By: Ben Nagel
+*****************************
 DESCRIPTION:
 This lab contains a program called "ftps" which creates a server 
 and sets up the server which waits to be connected with a client 
