@@ -50,7 +50,20 @@ ASSUMPTIONS:
 | FTP SERVER |  By: Ben Nagel
 **************
 DESCRIPTION:
-This lab contains a program called "ftps" which TODO 
+This lab contains a program called "ftps" which creates a server 
+and sets up the server which waits to be connected with a client 
+following the defined protocol. The server connects to an incoming client
+reads in the filesize, filename, and file data. Once the server is done reading
+from the file, it returns the amount of bytes read if that number matches 
+how many bytes the client sent.
+
+The specific tasks the client performs are as
+follows:
+- Create server socket from user provided port
+- Establish TCP STREAM connection to remote client
+- Perform file transfer over the connection
+- Reset's the server if the stream is cut mid-send.
+- returns the amount of bytes read from the client stream
 
 USAGE: ($ denotes the command prompt)
 Start the file transfer server with the command...
@@ -60,4 +73,13 @@ If any of the argument strings contain whitespace, those
 arguments will need to be enclosed in quotes.
 
 ASSUMPTIONS:
-- TODO
+
+- It is assumed that the filesize will be sent in one go.
+- It is assumed that the file name uses and ASCII
+  encoding.
+- It is assumed that the file size (in bytes) will be <=
+  the max UNSIGNED LONG value (i.e. (2^64)-1).
+- It is assumed that the OS supports file sizes (in
+  bytes) up to the max UNSIGNED LONG value.
+- It is assumed that all numeric values received from the
+  client will be in network order.
