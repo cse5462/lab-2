@@ -78,10 +78,10 @@ void transfer_file(params...) {
     ```C
     int transfer_header(params...) {
         /* send file size to server */
-        if (!sent) return 0;
+        if (!sent) return FALSE;
         /* send filename (including NULL) to server */
-        if (!sent) return 0;
-        return 1;
+        if (!sent) return FALSE;
+        return TRUE;
     }
     ```
 -
