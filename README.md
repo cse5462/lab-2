@@ -1,10 +1,10 @@
 # File Transfer Program – Stream Sockets
 > This is the README file for [Lab_2](https://osu.instructure.com/courses/97443/files/27903220/download?download_frd=1)
 
-NAME: Conner Graham, Ben Nagel  
-DATE: 02/04/2021
+**NAME:** Conner Graham, Ben Nagel  
+**DATE:** 02/04/2021
 
-## INCLUDED FILES
+## Included Files:
 - [makefile](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/makefile)
 - Client Design Document - Design_Client.md
 - FTP Client Source Code - [ftpc.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftpc.c)
