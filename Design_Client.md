@@ -25,17 +25,76 @@ and closes the connection.
 ```C
 int main(int argc, char *argv[]) {
     /* check that the arg count is correct */
-    if (correct) extractArgs(params...);
+    if (!correct) exit(EXIT_FAILURE);
+    extractArgs(params...);
     /* open/validate file to transfer */
+    if (!valid) exit(EXIT_FAILURE);
     create_endpoint(params...);
     /* establish connection to server */
     if (connected) {
         transfer_file(params...);
         /* terminate connection to server */
     }
+    return 0;
 }
 ```
 
 ## Low-Level Architecture
-TODO
+```C
+void extractArgs(params...) {
+    /* extract and validate remote IP address */
+    if (!valid) exit(EXIT_FAILURE);;
+    /* extract and validate remote port number */
+    if (!valid) exit(EXIT_FAILURE);
+    /* extract and validate filename */
+    if (!valid) exit(EXIT_FAILURE);
+}
+```
 
+```C
+int create_endpoint(params...) {
+    /* attempt to create socket */
+    if (created) {
+        /* initialize socket with params from user */
+    } else {
+        exit(EXIT_FAILURE);
+    }
+    return socket-descriptor;
+}
+```
+
+
+```C
+void transfer_file(params...) {
+    if (transfer_header(params...)) {
+        if (transfer_data(params...)) {
+            /* wait to receive ACK from server */
+            /* validate ACK */
+        }
+    }
+}
+```
+-
+    ```C
+    int transfer_header(params...) {
+        /* send file size to server */
+        if (!sent) return 0;
+        /* send filename (including NULL) to server */
+        if (!sent) return 0;
+        return 1;
+    }
+    ```
+-
+    ```C
+    int transfer_data(params...) {
+        while (/* successful and there is data to send */) {
+            /* read data from file */
+            if (error) break;
+            /* send data to server */
+            if (error) break;
+            /* validate: bytes read from file = bytes sent to server */
+        }
+        /* validate: total bytes sent to server = file size */
+        return (whether data sent successfully);
+    }
+    ```
