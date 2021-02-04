@@ -17,7 +17,7 @@
 
 ## Included Files
 - [makefile](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/makefile)
-- Client Design Document - Design_Client.md
+- Client Design Document - [Design_Client.md](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/Design_Client.md)
 - FTP Client Source Code - [ftpc.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftpc.c)
 - FTP Server Source Code - [ftps.c](https://github.com/CSE-5462-Spring-2021/assignment-2-conner-n-ben/blob/main/ftps.c)
 
