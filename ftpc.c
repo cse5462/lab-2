@@ -14,7 +14,7 @@
 /* The maximum number of bytes (excluding NULL) for file names. */
 #define FILENAME_SIZE 255
 /* The buffer size (in bytes) for the file transfer. */
-#define BUFFER_SIZE 10
+#define BUFFER_SIZE 2000
 
 uint64_t htonll(uint64_t __hostlonglong);
 uint64_t ntohll(uint64_t __netlonglong);
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	socketDesc = create_endpoint(&serverAddr, serverNetAddr, portNumber);
 	if (connect(socketDesc, (struct sockaddr *)&serverAddr, sizeof(struct sockaddr_in)) != -1) {
 		printf("[+]Connected to server.\n");
-		printf("Connected to IP address %s on port %hd\n", argv[1], htons(portNumber));
+		printf("Connected to IP address %s on port %hu\n", argv[1], htons(portNumber));
 		transfer_file(socketDesc, localFilename, localFile);
 		/* Close file since transmission is finished */
 		if (fclose(localFile) < 0) print_error("close local-file-to-transfer", errno, 0);
@@ -149,7 +149,6 @@ int valid_str(const char *str, const char *reject) {
 void extractArgs(char *argv[], unsigned long *address, int *port, char *filename) {
 	char *invalidFileChars = "/\\";
 	*address = inet_addr(argv[1]);
-	printf("%lu\n", *address);
 	if (*address == INADDR_NONE || *address == INADDR_ANY) handle_init_error("remote-IP: Invalid server address", 0);
 	*port = strtol(argv[2], NULL, 10);
 	if (*port < 1 || *port != (u_int16_t)(*port)) handle_init_error("remote-port: Invalid port number", 0);
@@ -211,13 +210,12 @@ int transfer_header(int sd, unsigned long fileSize, char *filename) {
 	uint64_t netFileSize = htonll(fileSize);
 
 	printf("Sending file size of %lu bytes\n", fileSize);
-	if (send(sd, &netFileSize, sizeof(uint64_t), 0) < 0) {
+	if (send(sd, &netFileSize, sizeof(uint64_t), MSG_NOSIGNAL) < 0) {
 		print_error("transfer_header", errno, 0);
 		return 0;
 	}
-	sleep(5);		/* FIXME */
 	printf("Sending filename \'%s\'\n", filename);
-	if (send(sd, filename, strlen(filename)+1, 0) < 0) {
+	if (send(sd, filename, strlen(filename)+1, MSG_NOSIGNAL) < 0) {
 		print_error("transfer_header", errno, 0);
 		return 0;
 	}
@@ -236,7 +234,6 @@ int transfer_data(int sd, unsigned long fileSize, FILE *file) {
 	unsigned long totalSent = 0;
 	char buffer[BUFFER_SIZE];
 
-	sleep(5);		/* FIXME */
 	do {
 		bRead = fread(buffer, sizeof(char), BUFFER_SIZE, file);
 		if (ferror(file)) {
@@ -244,16 +241,13 @@ int transfer_data(int sd, unsigned long fileSize, FILE *file) {
 			isSuccess = 0;
 			break;
 		}
-		printf("HERE1\n");		/* FIXME */
-		totalSent += (bSent = send(sd, buffer, bRead, 0));
-		printf("HERE2 %d\n", bSent);		/* FIXME */
+		bSent = send(sd, buffer, bRead, MSG_NOSIGNAL);
+		if (bSent > 0) totalSent += bSent;
 		if (bSent < 0) {
-			printf("ERROR\n");		/* FIXME */
 			print_error("transfer_data", errno, 0);
 			isSuccess = 0;
 			break;
 		}
-		printf("HERE3\n");		/* FIXME */
 		if (bRead != bSent) {
 			print_error("transfer_data: Number of bytes read and sent differ", 0, 0);
 			isSuccess = 0;
@@ -261,7 +255,7 @@ int transfer_data(int sd, unsigned long fileSize, FILE *file) {
 	} while (bRead == BUFFER_SIZE);
 	printf("Total of %lu bytes of data sent\n", totalSent);
 	if (!isSuccess || totalSent != fileSize) {
-		print_error("transfer_data: File data transfer was unsuccessful", 0, 0);
+		print_error("transfer_data: File data sent unsuccessfully", 0, 0);
 		isSuccess = 0;
 	} else {
 		printf("File data sent successfully\n");
