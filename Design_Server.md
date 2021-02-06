@@ -61,7 +61,7 @@ Reads input from the network stream and gets the file name.
 
 Creates the output file to write to in the recvd directory
 
- char outputfile[400];
+        char outputfile[400];
         memset(outputfile, 0, sizeof(outputfile));
         sprintf(outputfile, "recvd/%s", filename);
         printf("OutputFile name is : %s\n", outputfile); /* Open the output file */
@@ -73,7 +73,8 @@ Creates the output file to write to in the recvd directory
 
  Reads from the network stream reading the file file that is being transfered while writing it
 to the output file
- do
+
+        do
         {
             rc = read(connected_sd, &transferbuffer, 10); /* read in the transfer data from the client */
             if (rc <= 0)
@@ -90,8 +91,8 @@ to the output file
 
 Closes the sockets when the transfer is over
 
-// close all socket descriptors and files
-    if (close(connected_sd) < 0)
+
+    if (close(connected_sd) < 0) 
     {
         printf("ERROR CLOSING Socket descriptor");
     }
