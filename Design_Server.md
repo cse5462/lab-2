@@ -30,6 +30,7 @@ Reads input from the network Stream and gets the size of the file thats going to
         printf("Size of file: %lu\n", size);
         
 Reads input from the network stream and gets the file name.
+
 //reads the file names
         char filename[FILENAME_SIZE];
         memset(filename, 0, sizeof(filename));
