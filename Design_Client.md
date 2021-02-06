@@ -20,8 +20,10 @@ BUFFER_SIZE = TBD               // buffer size in bytes for the file transfer
 At a high level, the client application attempts to validate and extract the arguments passed
 to the application. It then attempts to validate the file and create the server endpoint. If
 everything was successful, the client then attempts to establish a connection to the server.
-If a connection is able to be established the client transfers the specified file to the server
-and closes the connection.
+If a connection is able to be established, the client transfers the specified file to the server
+and closes the connection. If an error occurs before the connection is established, the program
+terminates and prints appropriate error messages, otherwise an error message is printed and the
+connection is terminated.
 ```C
 int main(int argc, char *argv[]) {
     /* check that the arg count is correct */
@@ -40,6 +42,8 @@ int main(int argc, char *argv[]) {
 ```
 
 ## Low-Level Architecture
+Extracts the user provided arguments to their respective local variables and performs
+validation on their formatting. If any errors are found, the function terminates the process.
 ```C
 void extractArgs(params...) {
     /* extract and validate remote IP address */
@@ -50,7 +54,8 @@ void extractArgs(params...) {
     if (!valid) exit(EXIT_FAILURE);
 }
 ```
-
+Creates the comminication endpoint with the provided IP address and port number. If any
+errors are found, the function terminates the process.
 ```C
 int create_endpoint(params...) {
     /* attempt to create socket */
@@ -62,8 +67,8 @@ int create_endpoint(params...) {
     return socket-descriptor;
 }
 ```
-
-
+Transfer the file using the established protocol and check that the server
+received it successfully.
 ```C
 void transfer_file(params...) {
     if (transfer_header(params...)) {
@@ -74,7 +79,8 @@ void transfer_file(params...) {
     }
 }
 ```
--
+- Transfers the file header information to the server based on the established
+  protocol: | size (8 bytes) | filename | '\\0' |.
     ```C
     int transfer_header(params...) {
         /* send file size to server */
@@ -84,7 +90,7 @@ void transfer_file(params...) {
         return TRUE;
     }
     ```
--
+- Transfers the file data to the server.
     ```C
     int transfer_data(params...) {
         while (/* successful and there is data to send */) {
