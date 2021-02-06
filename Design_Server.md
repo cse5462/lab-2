@@ -22,4 +22,12 @@
 At a high level, the server application attempts to validate and extract the arguments passed to the application. It then attempts to create the server. If everything was successful, the client will be able to connect and send over the file. Once the file has been successfuly transfered the server returns a message starting that it was a successful transmission.
 
 ## Low-Level Architecture
-TODO
+Reads input from the network Stream and gets the size of the file thats going to be transfered
+
+        uint64_t fileSize;
+        read(connected_sd, &fileSize, 8); /* gets the filesize */
+        uint64_t size = ntohll(fileSize);
+        printf("Size of file: %lu\n", size);
+
+
+
