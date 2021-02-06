@@ -31,9 +31,9 @@ Reads input from the network Stream and gets the size of the file thats going to
         
 Reads input from the network stream and gets the file name.
 
-//reads the file names
+     
         char filename[FILENAME_SIZE];
-        memset(filename, 0, sizeof(filename));
+        memset(filename, 0, sizeof(filename)); /* reads the file name */
         int x = 0;
         int nullFound = 0;
         int breaked = 0;
@@ -89,6 +89,7 @@ to the output file
 
 
 Closes the sockets when the transfer is over
+
 // close all socket descriptors and files
     if (close(connected_sd) < 0)
     {
